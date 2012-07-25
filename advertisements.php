@@ -230,15 +230,31 @@ class AdsWidget extends WP_Widget {
 	function widget( $args, $instance ) {
 		extract( $args );
 		$title = apply_filters( 'widget_title', $instance['title'] );
+		$categories = $instance['categories'];
 		echo $before_widget;
 		if ( $title )
 			echo $before_title . $title . $after_title; ?>
 			<?php
-				$args = array(
-					'post_type' => 'ads_advertisements',
-					'posts_per_page' => 1,
-					'orderby' => 'rand',
-				);
+				if( '' != $categories ) {
+					$args = array(
+						'post_type' 		=> 'ads_advertisements',
+						'posts_per_page'	=> 1,
+						'orderby'			=> 'rand',
+						'tax_query' => array(
+							array(
+								'taxonomy'	=> 'ads_categories',
+								'field'		=> 'slug',
+								'terms'		=> explode( ',', $categories )
+							)
+						),
+					);
+				} else {
+					$args = array(
+						'post_type' 		=> 'ads_advertisements',
+						'posts_per_page'	=> 1,
+						'orderby'			=> 'rand',
+					);
+				}
 				$news_query = new WP_Query($args);
 					if( $news_query->have_posts() ): while( $news_query->have_posts() ): $news_query->the_post(); ?>
 						<?php if ( has_post_thumbnail() ) { ?>
@@ -258,7 +274,23 @@ class AdsWidget extends WP_Widget {
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 		$instance['title'] = strip_tags($new_instance['title']);
+		$instance['categories'] = strip_tags($new_instance['categories']);
 		return $instance;
+	}
+	
+	function form( $instance ) {
+		if ( isset( $instance[ 'categories' ] ) ) {
+			$categories = $instance[ 'categories' ];
+		}
+		else {
+			$categories = __( 'New Category', 'ads' );
+		}
+		?>
+		<p>
+		<label for="<?php echo $this->get_field_id( 'categories' ); ?>"><?php _e( 'Categories:' ); ?></label> 
+		<input class="widefat" id="<?php echo $this->get_field_id( 'categories' ); ?>" name="<?php echo $this->get_field_name( 'categories' ); ?>" type="text" value="<?php echo esc_attr( $categories ); ?>" />
+		</p>
+		<?php 
 	}
 
 } // class AdsWidget
