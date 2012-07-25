@@ -13,6 +13,16 @@
 
 
 /**
+ * Add post thumbnails to advertissements post
+ *
+ * @since ads 1.1
+ */
+function ads_add_theme_support_ads_thumbnails() {
+	add_theme_support('post-thumbnails');
+}
+add_action( 'after_setup_theme', 'ads_add_theme_support_ads_thumbnails', 11 );
+
+/**
  * Register custom post types.
  *
  * @since ads 1.0
