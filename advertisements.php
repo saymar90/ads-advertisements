@@ -186,6 +186,38 @@ function ads_save_post( $post_id, $post ) {
 }
 
 /**
+ * Create a taxonomy, ads_types the post type "ads_avertissements".
+ *
+ * @since ads 1.1
+ */
+add_action( 'init', 'ads_taxonomies', 0 );
+
+function ads_taxonomies() {
+
+	$labels = array(
+		'name' => _x( 'Categories', 'taxonomy general name' ),
+		'singular_name' => _x( 'Category', 'taxonomy singular name' ),
+		'search_items' =>  __( 'Search Categories' ),
+		'all_items' => __( 'All Categories' ),
+		'parent_item' => __( 'Parent Category' ),
+		'parent_item_colon' => __( 'Parent Category:' ),
+		'edit_item' => __( 'Edit Category' ), 
+		'update_item' => __( 'Update Category' ),
+		'add_new_item' => __( 'Add New Category' ),
+		'new_item_name' => __( 'New Category Name' ),
+		'menu_name' => __( 'Categories' ),
+	); 	
+
+	register_taxonomy('ads_categories',array('ads_advertisements'), array(
+		'hierarchical' => true,
+		'labels' => $labels,
+		'show_ui' => true,
+		'query_var' => true,
+		'rewrite' => array( 'slug' => 'ads-categories' ),
+	));
+}
+
+/**
  * AdsWidget Class
  */
 class AdsWidget extends WP_Widget {
